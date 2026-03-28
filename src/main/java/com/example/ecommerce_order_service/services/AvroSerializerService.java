@@ -1,7 +1,7 @@
 package com.example.ecommerce_order_service.services;
 
-import com.example.ecommerce_common_events.OrderAvroCreatedEvent;
 import com.example.ecommerce_common_events.OrderCreatedEvent;
+import com.example.events.OrderAvroCreatedEvent;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.stereotype.Service;

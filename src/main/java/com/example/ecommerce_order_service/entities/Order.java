@@ -4,14 +4,10 @@ import java.time.LocalDateTime;
 
 import com.example.ecommerce_order_service.dto.OrderStatus;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "orders_microservice")
 public class Order {
 
     @Id

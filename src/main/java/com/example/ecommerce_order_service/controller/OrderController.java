@@ -22,7 +22,8 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Long> createOrder(@RequestBody CreateOrderRequest request) {
        // Long id = orderService.createOrder(request);
-        Long id = orderService.createOrderConOutbox(request);
+        //Long id = orderService.createOrderWhitOutbox(request);
+        Long id = orderService.createOrderWhitAvroAndOutbox(request);
         return ResponseEntity.ok(id);
     }
 }

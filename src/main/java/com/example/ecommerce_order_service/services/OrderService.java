@@ -1,24 +1,23 @@
 package com.example.ecommerce_order_service.services;
 
-import com.example.ecommerce_order_service.entities.OutboxAvroEvent;
+import com.example.ecommerce_order_service.entities.OutboxAvroEventEntity;
 import com.example.ecommerce_order_service.repositories.OutboxAvroRepository;
 import com.example.events.OrderAvroCreatedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import com.example.ecommerce_common_events.OrderCreatedEvent;
 import com.example.ecommerce_order_service.dto.CreateOrderRequest;
 import com.example.ecommerce_order_service.dto.OrderStatus;
 import com.example.ecommerce_order_service.entities.Order;
-import com.example.ecommerce_order_service.entities.OutboxEvent;
 import com.example.ecommerce_order_service.repositories.OrderRepository;
 import com.example.ecommerce_order_service.repositories.OutboxRepository;
 
 import jakarta.transaction.Transactional;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,25 +26,25 @@ public class OrderService {
     private final OrderRepository repository;
     private final OutboxRepository outboxRepository;
     private final OutboxAvroRepository outboxAvroRepository;//*********USING AVRO*********
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, OrderAvroCreatedEvent> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    private final AvroSerializerService avroSerializer;//*********USING AVRO*********
+    //private final AvroSerializerService avroSerializer;//*********USING AVRO*********
 
     public OrderService(OrderRepository repository,
-                        KafkaTemplate<String, Object> kafkaTemplate,
+                        KafkaTemplate<String, OrderAvroCreatedEvent> kafkaTemplate,
                         OutboxRepository outboxRepository, OutboxAvroRepository outboxAvroRepository,
-                        ObjectMapper objectMapper, AvroSerializerService avroSerializer
+                        ObjectMapper objectMapper/*, AvroSerializerService avroSerializer*/
     ) {
         this.repository = repository;
         this.kafkaTemplate = kafkaTemplate;
         this.outboxRepository = outboxRepository;
         this.outboxAvroRepository = outboxAvroRepository;
         this.objectMapper = objectMapper;
-        this.avroSerializer = avroSerializer;//*********USING AVRO*********
+        /*this.avroSerializer = avroSerializer;*///*********USING AVRO*********
     }
 
-    @Transactional
+    /*@Transactional
     public Long createOrder(CreateOrderRequest request) {//sin outbox Event
 
         Order order = new Order();
@@ -62,9 +61,9 @@ public class OrderService {
         kafkaTemplate.send("order-created",event);
 
         return order.getId();
-    }
+    }*/
     
-    @Transactional
+    /*@Transactional
     public Long createOrderWhitOutbox(CreateOrderRequest request) {
 
         Order order = new Order();
@@ -97,10 +96,10 @@ public class OrderService {
         outboxRepository.save(outbox);
 
         return order.getId();
-    }
+    }*/
 
-    @Transactional
-    public Long createOrderWhitAvroAndOutbox(CreateOrderRequest request) {
+    /*@Transactional
+    public Long createOrderWhitAvroAndOutbox(CreateOrderRequest request) {//*********USING AVRO********* Avro binario manual
 
         // 1. Guardar Order
         Order order = new Order();
@@ -138,6 +137,61 @@ public class OrderService {
                 order.getId().toString(),
                 "OrderAvroCreatedEvent",
                 payload
+        );
+
+        outboxAvroRepository.save(outbox);
+
+        return order.getId();
+    }*/
+
+    @Transactional
+    public Long createOrderWhitAvroAndOutboxAndRegistry(CreateOrderRequest request) {
+
+        // 1. Guardar Order
+        Order order = new Order();
+        order.setCustomerId(request.getCustomerId());
+        order.setProductId(request.getProductId());
+        order.setShippingAddress(request.getShippingAddress());
+        order.setQuantity(request.getQuantity());
+        order.setStatus(OrderStatus.PENDING);
+
+        order = repository.save(order);
+
+        // 2. Crear evento AVRO (SOLO objeto, NO serializar)
+        OrderAvroCreatedEvent event = OrderAvroCreatedEvent.newBuilder()
+                .setEventId(UUID.randomUUID().toString())
+                .setOrderId(order.getId())
+                .setProductId(request.getProductId())
+                .setQuantity(request.getQuantity())
+                .setClientLat(41.3841)
+                .setClientLon(2.1734)
+                .setOccurredAt(Instant.now().toString())
+                .build();
+
+        // 3. Guardar en Outbox como JSON (NO binario)
+        String payload;
+        try {
+            Map<String, Object> payloadMap = new HashMap<>();
+            payloadMap.put("eventId", event.getEventId());
+            payloadMap.put("orderId", event.getOrderId());
+            payloadMap.put("productId", event.getProductId());
+            payloadMap.put("quantity", event.getQuantity());
+            payloadMap.put("clientLat", event.getClientLat());
+            payloadMap.put("clientLon", event.getClientLon());
+            payloadMap.put("occurredAt", event.getOccurredAt());
+
+            payload = objectMapper.writeValueAsString(payloadMap);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error serializando evento a JSON", e);
+        }
+
+        OutboxAvroEventEntity outbox = new OutboxAvroEventEntity(
+                event.getEventId().toString(),
+                "ORDER",
+                order.getId().toString(),
+                "OrderAvroCreatedEvent",
+                payload // 👈 JSON, no bytes
         );
 
         outboxAvroRepository.save(outbox);

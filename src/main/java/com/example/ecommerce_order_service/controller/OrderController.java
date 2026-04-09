@@ -23,7 +23,8 @@ public class OrderController {
     public ResponseEntity<Long> createOrder(@RequestBody CreateOrderRequest request) {
        // Long id = orderService.createOrder(request);
         //Long id = orderService.createOrderWhitOutbox(request);
-        Long id = orderService.createOrderWhitAvroAndOutbox(request);
+       // Long id = orderService.createOrderWhitAvroAndOutbox(request);//*********USING AVRO********* Avro binario manual
+        Long id = orderService.createOrderWhitAvroAndOutboxAndRegistry(request);
         return ResponseEntity.ok(id);
     }
 }

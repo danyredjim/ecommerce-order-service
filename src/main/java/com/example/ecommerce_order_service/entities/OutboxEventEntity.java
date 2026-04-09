@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "outbox_events")
-public class OutboxEvent {
+public class OutboxEventEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +29,9 @@ public class OutboxEvent {
 
     private Instant createdAt;
 
-    protected OutboxEvent() {}
+    protected OutboxEventEntity() {}
 
-    public OutboxEvent(String eventId, String aggregateType,String aggregateId,String eventType,String payload) {
+    public OutboxEventEntity(String eventId, String aggregateType, String aggregateId, String eventType, String payload) {
         this.eventId = eventId;
         this.aggregateType = aggregateType;
         this.aggregateId = aggregateId;

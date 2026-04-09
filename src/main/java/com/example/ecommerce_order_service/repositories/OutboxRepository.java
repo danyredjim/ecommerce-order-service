@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.ecommerce_order_service.entities.OutboxEvent;
+import com.example.ecommerce_order_service.entities.OutboxEventEntity;
 
-public interface OutboxRepository extends JpaRepository<OutboxEvent, Long>{
+public interface OutboxRepository extends JpaRepository<OutboxEventEntity, Long>{
 
-	List<OutboxEvent> findByPublishedFalse();
+	List<OutboxEventEntity> findByPublishedFalse();
 
 }

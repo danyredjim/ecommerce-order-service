@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-order-api
+  labels:
+    app: ecommerce-order   # 🔥 agrupa toda la app
+    service: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ecommerce-order
+  template:
+    metadata:
+      labels:
+        app: ecommerce-order
+    spec:
+      containers:
+        - name: ecommerce-order
+          image: localhost:5000/ecommerce-order:5
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: USERS_SERVICE_URL
+              value: http://ecommerce-order:8080   # 🔥 AÑADIDO

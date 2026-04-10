@@ -22,5 +22,9 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: USERS_SERVICE_URL
-              value: http://ecommerce-order:8080   # 🔥 AÑADIDO
+            - name: DB_URL
+              value: jdbc:postgresql://postgres:5432/amazon_microservice
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASS
+              value: postgres

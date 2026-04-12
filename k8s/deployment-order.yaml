@@ -22,9 +22,15 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: USER_SERVICE_URL
+              value: http://ecommerce-inventory:8089
             - name: DB_URL
               value: jdbc:postgresql://postgres:5432/amazon_microservice
             - name: DB_USER
               value: postgres
             - name: DB_PASS
               value: postgres
+            - name: KAFKA_SERVER
+              value: kafka:9092
+            - name: SCHEMA_REGISTRY
+              value: http://schema-registry:8081

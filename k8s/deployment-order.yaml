@@ -6,7 +6,7 @@ metadata:
     app: ecommerce-order   # 🔥 agrupa toda la app
     service: api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: ecommerce-order

@@ -1,7 +1,8 @@
 package com.example.ecommerce_order_service.config;
 
 import com.example.events.OrderAvroCreatedEvent;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.apicurio.registry.serde.avro.AvroKafkaSerializer;
+//import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,10 +50,12 @@ public class KafkaProducerConfig {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
-        config.put("schema.registry.url", schemaRegistry); // OK
+        //config.put("schema.registry.url", schemaRegistry); // OK
+        config.put("apicurio.registry.url", schemaRegistry);
 
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+       // config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroKafkaSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(config);
     }

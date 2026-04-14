@@ -52,6 +52,7 @@ public class KafkaProducerConfig {
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         //config.put("schema.registry.url", schemaRegistry); // OK
         config.put("apicurio.registry.url", schemaRegistry);
+        config.put("apicurio.registry.auto-register", true);
 
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
        // config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer.class);

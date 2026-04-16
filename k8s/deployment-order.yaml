@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: ecommerce-order
-          image: localhost:5000/ecommerce-order:5
-          imagePullPolicy: Never
+          image: host.docker.internal:5000/ecommerce-order-service:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

@@ -25,7 +25,7 @@ spec:
             - name: USER_SERVICE_URL
               value: http://ecommerce-inventory:8089
             - name: DB_URL
-              value: jdbc:postgresql://postgres:5432/amazon_microservice
+              value: jdbc:postgresql://postgres:5432/amazon_ecommerce_order
             - name: DB_USER
               value: postgres
             - name: DB_PASS
